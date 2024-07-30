@@ -1,23 +1,32 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import Quiz from './components/Quiz/Quiz';
+import Result from './components/Result/Result';
+import Welcome from './components/Welcome/Welcome';
 import './App.css';
 
 function App() {
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [quizFinished, setQuizFinished] = useState(false);
+  const [resultData, setResultData] = useState(null);
+
+  function handleStart(){
+    setQuizStarted(true);
+  };
+
+  function handleFinish(data){
+    setResultData(data);
+    setQuizFinished(true);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {!quizStarted ? (
+        <Welcome onStart={handleStart} />
+      ) : quizFinished ? (
+        <Result score={resultData.score} answers={resultData.answers} />
+      ) : (
+        <Quiz onFinish={handleFinish} />
+      )}
     </div>
   );
 }
