@@ -8,7 +8,7 @@ function Result({ score, answers }) {
         {answers.map((answer, index) => (
           <li key={index} className={answer.isCorrect ? 'correct' : 'incorrect'}>
             <h2>Question: <span>{answer.question.question}</span><br /></h2>
-            <p className='your_answer'>Your Answer: <span>{answer.question.options.find(option => option.isCorrect === answer.isCorrect).text}</span><br /></p>
+            <p className='your_answer'>Your Answer: <span>{answer.question.options.find(option => option.isCorrect === answer.isCorrect).text}</span></p><br />
             {answer.isCorrect?"":<p className='correct_answer'>Correct Answer: <span>{answer.question.options.find(option => option.isCorrect).text}</span></p>}
           </li>
         ))}

@@ -9,49 +9,34 @@ function Quiz({ onFinish }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [answers, setAnswers] = useState([]);
 
-  const nextQuestion = useCallback(() => {
-    setSelectedOption(null);
-    if (currentQuestion + 1 < questions.length) {
-      setCurrentQuestion(currentQuestion + 1);
+  const handleAnswer = (isCorrect) => {
+    setScore((prev) => prev + (isCorrect ? 1 : 0));
+    setAnswers(answers.push({ question: questions[currentQuestion], isCorrect }));
+    if (currentQuestion + 1 === questions.length) {
+      onFinish({ score: score + (isCorrect ? 1 : 0), answers });
     } else {
-      onFinish({ score, answers });
+      setCurrentQuestion((prev) => prev + 1);
+      setSelectedOption(null);
     }
-  }, [currentQuestion, onFinish, score, answers]);
-
-
-  function handleAnswer(isCorrect){
-    setScore(prevScore => prevScore + (isCorrect ? 1 : 0));
-  
-    setAnswers(prevAnswers => {
-      const updatedAnswers = [
-        ...prevAnswers,
-        { question: questions[currentQuestion], isCorrect }
-      ];
-  
-      if (currentQuestion + 1 === questions.length) {
-        onFinish({ score: score + (isCorrect ? 1 : 0), answers: updatedAnswers });
-      } else {
-        nextQuestion();
-      }
-  
-      return updatedAnswers; 
-    });
   };
-  
 
   const handleTimeUp = useCallback(() => {
-    nextQuestion();
-  }, [nextQuestion]);
+    setCurrentQuestion((prev) => prev + 1);
+    setSelectedOption(null);
+  }, []);
+  
 
-  function handleOptionChange(option){
+  const handleOption = (option) => {
     setSelectedOption(option);
   };
 
-  function handleSubmit(){
+
+  const handleSubmit = () => {
     if (selectedOption) {
       handleAnswer(selectedOption.isCorrect);
     } else {
-      nextQuestion();
+      setCurrentQuestion((prev) => prev + 1);
+      setSelectedOption(null);
     }
   };
 
@@ -64,8 +49,7 @@ function Quiz({ onFinish }) {
           <Choice
             key={index}
             option={option}
-            handleOptionChange={handleOptionChange}
-            handleAnswer={handleAnswer}
+            handleOption={handleOption}
             selectedOption={selectedOption}
           />
         ))}

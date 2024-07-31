@@ -7,14 +7,14 @@ import './App.css';
 function App() {
   const [quizStarted, setQuizStarted] = useState(false);
   const [quizFinished, setQuizFinished] = useState(false);
-  const [resultData, setResultData] = useState(null);
+  const [result, setResult] = useState(null);
 
   function handleStart(){
     setQuizStarted(true);
   };
 
   function handleFinish(data){
-    setResultData(data);
+    setResult(data);
     setQuizFinished(true);
   };
 
@@ -23,7 +23,7 @@ function App() {
       {!quizStarted ? (
         <Welcome onStart={handleStart} />
       ) : quizFinished ? (
-        <Result score={resultData.score} answers={resultData.answers} />
+        <Result score={result.score} answers={result.answers} />
       ) : (
         <Quiz onFinish={handleFinish} />
       )}

@@ -1,10 +1,10 @@
 import React from 'react';
 
-function Choice({ option, handleOptionChange, handleAnswer, selectedOption }) {
+function Choice({ option, handleOption, handleAnswer, selectedOption }) {
   return (
     <div
       className={`option ${selectedOption === option ? 'selected' : ''}`}
-      onClick={() => handleOptionChange(option)}
+      onClick={() => handleOption(option)}
     >
       <input
         type="radio"
