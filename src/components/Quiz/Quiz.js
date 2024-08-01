@@ -9,15 +9,21 @@ function Quiz({ onFinish }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [answers, setAnswers] = useState([]);
 
+  console.log(answers);
+
   const handleAnswer = (isCorrect) => {
+  
     setScore((prev) => prev + (isCorrect ? 1 : 0));
-    setAnswers((prevAnswers) => [
-      ...prevAnswers,
+
+
+    setAnswers((prev) => [
+      ...prev,
       { question: questions[currentQuestion], isCorrect },
     ]);
 
+    
     if (currentQuestion + 1 === questions.length) {
-      onFinish({ score: score + (isCorrect ? 1 : 0), answers });
+      onFinish({ score: score + (isCorrect ? 1 : 0), answers: [...answers, { question: questions[currentQuestion], isCorrect }] });
     } else {
       setCurrentQuestion((prev) => prev + 1);
       setSelectedOption(null);
@@ -28,10 +34,14 @@ function Quiz({ onFinish }) {
     if (selectedOption) {
       handleAnswer(selectedOption.isCorrect);
     } else {
-      setCurrentQuestion((prev) => prev + 1);
-      setSelectedOption(null);
+      if (currentQuestion + 1 === questions.length) {
+        onFinish({ score, answers: [...answers, { question: questions[currentQuestion], isCorrect: false }] });
+      } else {
+        setCurrentQuestion((prev) => prev + 1);
+        setSelectedOption(null);
+      }
     }
-  }, [selectedOption, handleAnswer]);
+  }, [selectedOption, currentQuestion, answers, score, onFinish]);
 
   const handleOption = (option) => {
     setSelectedOption(option);
@@ -41,17 +51,21 @@ function Quiz({ onFinish }) {
     if (selectedOption) {
       handleAnswer(selectedOption.isCorrect);
     } else {
-      setCurrentQuestion((prev) => prev + 1);
-      setSelectedOption(null);
+      if (currentQuestion + 1 === questions.length) {
+        onFinish({ score, answers: [...answers, { question: questions[currentQuestion], isCorrect: false }] });
+      } else {
+        setCurrentQuestion((prev) => prev + 1);
+        setSelectedOption(null);
+      }
     }
   };
 
   return (
     <div className="quiz">
       <Timer key={currentQuestion} duration={10} onTimeUp={handleTimeUp} />
-      <h1>{questions && questions[currentQuestion].question}</h1>
+      <h1>{questions[currentQuestion]?.question}</h1>
       <div className="options">
-        {questions[currentQuestion].options.map((option, index) => (
+        {questions[currentQuestion]?.options.map((option, index) => (
           <Choice
             key={index}
             option={option}
