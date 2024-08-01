@@ -11,7 +11,11 @@ function Quiz({ onFinish }) {
 
   const handleAnswer = (isCorrect) => {
     setScore((prev) => prev + (isCorrect ? 1 : 0));
-    setAnswers(answers.push({ question: questions[currentQuestion], isCorrect }));
+    setAnswers((prevAnswers) => [
+      ...prevAnswers,
+      { question: questions[currentQuestion], isCorrect },
+    ]);
+
     if (currentQuestion + 1 === questions.length) {
       onFinish({ score: score + (isCorrect ? 1 : 0), answers });
     } else {
@@ -21,15 +25,17 @@ function Quiz({ onFinish }) {
   };
 
   const handleTimeUp = useCallback(() => {
-    setCurrentQuestion((prev) => prev + 1);
-    setSelectedOption(null);
-  }, []);
-  
+    if (selectedOption) {
+      handleAnswer(selectedOption.isCorrect);
+    } else {
+      setCurrentQuestion((prev) => prev + 1);
+      setSelectedOption(null);
+    }
+  }, [selectedOption, handleAnswer]);
 
   const handleOption = (option) => {
     setSelectedOption(option);
   };
-
 
   const handleSubmit = () => {
     if (selectedOption) {
@@ -43,7 +49,7 @@ function Quiz({ onFinish }) {
   return (
     <div className="quiz">
       <Timer key={currentQuestion} duration={10} onTimeUp={handleTimeUp} />
-      <h1>{questions[currentQuestion].question}</h1>
+      <h1>{questions && questions[currentQuestion].question}</h1>
       <div className="options">
         {questions[currentQuestion].options.map((option, index) => (
           <Choice
